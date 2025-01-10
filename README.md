@@ -1,6 +1,6 @@
 # PowerShell One Liners for Cyber Defender
 
-A collection of PowerShell one-liners for cyber defenders to automate tasks that typically require the ISE or running as a .ps1 script.
+A collection of PowerShell one-liners for cyber defenders to automate tasks that typically require the ISE or running a .ps1 script.
 
 ## Reverse DNS Lookup
 Automate bulk IP address reverse DNS lookup from a text file. Replace the `<FilePathofTxtFile.txt>` with the actual .txt file path.
