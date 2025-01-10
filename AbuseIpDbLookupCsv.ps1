@@ -1,7 +1,7 @@
 
 <#
     Automate Abuse IP DB lookup for multiple IP addresses from a text file.
-    Replace the <FilePathofTxtFile.txt> with the actual file path of the .txt file, the <ApiKey> with your Abuse IP DB API key, and run the PS script below on the console.
+    Replace the <FilePathofTxtFile.txt> with the actual file path of the .txt file, the <ApiKey> with your Abuse IP DB V2 API key, and run the PS script below on the console.
 
     It will create a CSV file with the following columns: ipAddress, countryCode, isp, domain, abuseConfidenceScore, totalReports, isWhitelisted, and isTor
 #>
