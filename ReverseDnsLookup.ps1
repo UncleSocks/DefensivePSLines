@@ -1,6 +1,6 @@
 
 <#
-    Automate reverse DNS lookup of multiple IP addresses from a text file.
+    Automate bulk IP address reverse DNS lookup from a text file.
     Replace the <FilePathofTxtFile.txt> with the actual file path of the .txt file and run the PS script below on the console.
 
     SAMPLE OUTPUT:

@@ -1,6 +1,6 @@
 
 <#
-    Automate VirusTotal lookup for multiple IP addresses from a text file.
+    Automate bulk IP address VirusTotal lookup from a text file.
     Replace the <FilePathofTxtFile.txt> with the actual file path of the .txt file, the <ApiKey> with your virusTotal V3 API key, and run the PS script below on the console.
 
     SAMPLE OUTPUT:
