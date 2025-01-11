@@ -1,6 +1,6 @@
 # PowerShell One Liners for Cyber Defender
 
-A collection of PowerShell one-liners for cyber defenders to automate tasks that typically require the ISE or running as a .ps1 script.
+A collection of PowerShell one-liners for cyber defenders to automate tasks that typically require the ISE or running a .ps1 script.
 
 ## Reverse DNS Lookup
 Automate bulk IP address reverse DNS lookup from a text file. Replace the `<FilePathofTxtFile.txt>` with the actual .txt file path.
@@ -15,7 +15,7 @@ Get-Content -Path <FilePathofTxtFile.txt> | ForEach-Object { $lookup=Invoke-Rest
 ```
 
 If you want to export the output to a CSV file, use the following one-liner, instead:
-This will create a **output.csv** file on the currenct directory.
+This will create a **output.csv** file on the current directory.
 ```
 Get-Content -Path <FilePathofTxtFile.txt> | ForEach-Object { $lookup=Invoke-RestMethod -Uri 'https://api.abuseipdb.com/api/v2/check' -Method 'GET' -Headers @{'Key'="<ApiKey>";'Application'='application/json'} -Body @{'ipAddress'=$_; 'maxAgeInDays'='90'} -ErrorAction SilentlyContinue; $lookup.data } | Select-Object ipAddress,countryCode,isp,domain,abuseConfidenceScore,totalReports,isWhitelisted,isTor | Export-Csv -Path 'output.csv' -NoTypeInformation
 ```
@@ -24,4 +24,10 @@ Get-Content -Path <FilePathofTxtFile.txt> | ForEach-Object { $lookup=Invoke-Rest
 Automate bulk IP address VirusTotal lookup from a text file. Replace the `<FilePathofTxtFile.txt>` with the actual .txt file path.
 ```
 Get-Content -Path .<FilePathofTxtFile.txt> | ForEach-Object { $lookup=Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/ip_addresses/$_" -Method GET -Headers @{"accept"="application/json";"x-apikey"="<ApiKey>"} -ErrorAction SilentlyContinue; [PSCustomObject]@{IpAddress=$_;AsOwner=$lookup.data.attributes.as_owner;Malicious=$lookup.data.attributes.last_analysis_stats.malicious;Suspicious=$lookup.data.attributes.last_analysis_stats.suspicious;Undetected=$lookup.data.attributes.last_analysis_stats.undetected;Harmless=$lookup.data.attributes.last_analysis_stats.harmless;Timeout=$lookup.data.attributes.last_analysis_stats.timeout}} | Format-Table -AutoSize
+```
+
+If you want to export the output to a CSV file, use the following one-liner, instead:
+This will create a **output.csv** file on the current directory.
+```
+Get-Content -Path .<FilePathofTxtFile.txt> | ForEach-Object { $lookup=Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/ip_addresses/$_" -Method GET -Headers @{"accept"="application/json";"x-apikey"="<ApiKey>"} -ErrorAction SilentlyContinue; [PSCustomObject]@{IpAddress=$_;AsOwner=$lookup.data.attributes.as_owner;Malicious=$lookup.data.attributes.last_analysis_stats.malicious;Suspicious=$lookup.data.attributes.last_analysis_stats.suspicious;Undetected=$lookup.data.attributes.last_analysis_stats.undetected;Harmless=$lookup.data.attributes.last_analysis_stats.harmless;Timeout=$lookup.data.attributes.last_analysis_stats.timeout}} | Export-Csv -Path 'output.csv' -NoTypeInformation
 ```
