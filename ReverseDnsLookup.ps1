@@ -1,7 +1,7 @@
 
 <#
     Automate bulk IP address reverse DNS lookup from a text file.
-    Replace the <FilePathofTxtFile.txt> with the actual file path of the .txt file and run the PS script below on the console.
+    Either replcee $TxtFilePath with the actual file path of the .txt file or define it as a variable prior to running the one-liner.
 
     SAMPLE OUTPUT:
     IpAddress     Domain
@@ -10,4 +10,4 @@
     8.8.8.8       dns.google
 #>
 
-Get-Content -Path <FilePathofTxtFile.txt> | ForEach-Object { $domain=Resolve-DnsName -Name $_ -Type PTR -DnsOnly -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NameHost; [PSCustomObject]@{IpAddress=$_;Domain=$domain} } | Format-Table -AutoSize
+Get-Content -Path $TxtFilePath | ForEach-Object { $domain=Resolve-DnsName -Name $_ -Type PTR -DnsOnly -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NameHost; [PSCustomObject]@{IpAddress=$_;Domain=$domain} } | Format-Table -AutoSize
