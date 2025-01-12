@@ -8,6 +8,12 @@ Automate bulk IP address reverse DNS lookup from a text file. Replace the `<File
 Get-Content -Path <FilePathofTxtFile.txt> | ForEach-Object { $domain=Resolve-DnsName -Name $_ -Type PTR -DnsOnly -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NameHost; [PSCustomObject]@{IpAddress=$_;Domain=$domain} } | Format-Table -AutoSize
 ```
 
+## Windows Event External DNS Query
+Captures external DNS queries from Windows Event ID 3008. Ensure that Microsoft Windows DNS Client Operational logging is enabled. Please also note that it may take a while depending on the max log file configured.
+```
+Get-WinEvent -LogName "Microsoft-Windows-DNS-Client/Operational" | Where-Object {$_.Id -eq '3008' -and $_.Message -ne (Hostname) -and $_.Message -notmatch "..localmachine"} | ForEach-Object {if ($_.Message -match "DNS query is completed for the name ([^,\s]+)") {$matches[1]}} | Sort-Object | Select-Object -Unique @{Name="DnsQuery";Expression={$_}}
+```
+
 ## Abuse IP DB Lookup
 Automate bulk IP address Abuse IP DB lookup from a text file. Replace the `<FilePathofTxtFile.txt>` with the actual .txt file path and the `<ApiKey>` with your Abuse IP DB v2 API key.
 ```
