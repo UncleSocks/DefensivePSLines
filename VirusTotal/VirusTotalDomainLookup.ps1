@@ -9,6 +9,10 @@
     google.com   MarkMonitor Inc.                     0          0         28       66       0
     facebook.com RegistrarSafe, LLC                   0          1         28       65       0
     rog.us       TLD Registrar Solutions Ltd.         0          0         35       59       0
+
+    Defining the variables (example):
+    > $TxtFilePath="C:\Users\UncleSocks\LocationOfFile\address.txt"
+    > $ApiKey="ThisIsARandomString1234567890"
 #>
 
 

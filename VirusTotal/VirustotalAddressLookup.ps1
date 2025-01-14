@@ -12,6 +12,10 @@
     64.211.3.42 LVLT-3549                    0          0         94        0       0
     192.168.1.1                              0          0         32       62       0
     90.32.11.43 Orange                       0          0         94        0       0
+
+    Defining the variables (example):
+    > $TxtFilePath="C:\Users\UncleSocks\LocationOfFile\address.txt"
+    > $ApiKey="ThisIsARandomString1234567890"
 #>
 
 Get-Content -Path $TxtFilePath | ForEach-Object { $lookup=Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/ip_addresses/$_" -Method "GET" -Headers @{"accept"="application/json";"x-apikey"=$ApiKey} -ErrorAction SilentlyContinue; [PSCustomObject]@{IpAddress=$_;AsOwner=$lookup.data.attributes.as_owner;Malicious=$lookup.data.attributes.last_analysis_stats.malicious;Suspicious=$lookup.data.attributes.last_analysis_stats.suspicious;Undetected=$lookup.data.attributes.last_analysis_stats.undetected;Harmless=$lookup.data.attributes.last_analysis_stats.harmless;Timeout=$lookup.data.attributes.last_analysis_stats.timeout}} | Format-Table -AutoSize
