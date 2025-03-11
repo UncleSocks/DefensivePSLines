@@ -1,0 +1,28 @@
+Mar 11 10:00:01 server1 systemd[1]: Started Daily apt download activities.
+Mar 11 10:01:12 server1 kernel: [112356.456789] EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+Mar 11 10:03:25 server1 sshd[1878]: Accepted password for user_1 from 192.168.1.10 port 52234 ssh2
+Mar 11 10:04:12 server1 systemd[1]: Starting OpenSSH server daemon...
+Mar 11 10:05:01 server1 sshd[1883]: Accepted publickey for user2 from 192.168.1.12 port 52678 ssh2: RSA SHA256:AbCdEfGhIjKlMnOpQrStUvWxYz1234567890=
+Mar 11 10:07:18 server1 systemd[1]: Started Postfix Mail Transport Agent.
+Mar 11 10:08:30 server1 sshd[1890]: Failed password for root from 192.168.1.20 port 55732 ssh2
+Mar 11 10:09:12 server1 kernel: [112360.123456] audit: type=1100 audit(1678535952.856:88): pid=1883 uid=0 auid=4294967295 ses=4294967295 msg='op=execve dir="/usr/sbin" name="sshd" path="/usr/sbin/sshd"'
+Mar 11 10:12:08 server1 sshd[1895]: Accepted password for user1 from 192.168.1.15 port 56543 ssh2
+Mar 11 10:14:00 server1 systemd[1]: Started Network Service.
+Mar 11 10:14:25 server1 sshd[1902]: Accepted publickey for user-3 from 192.168.1.18 port 57864 ssh2: ECDSA SHA256:MnOpQrStUvWxYz1234567890AbCdEfGhIjKlLmNo=
+Mar 11 10:16:17 server1 systemd[1]: Stopping Unattended Upgrades...
+Mar 11 10:17:42 server1 sshd[1912]: Failed password for root from 192.168.1.25 port 56342 ssh2
+Mar 11 10:19:05 server1 systemd[1]: Starting Docker Application Container Engine...
+Mar 11 10:20:15 server1 sshd[1918]: Accepted password for user4 from 192.168.1.30 port 57201 ssh2
+Mar 11 10:22:03 server1 sshd[1925]: Accepted publickey for user5 from 192.168.1.40 port 58791 ssh2: RSA SHA256:KlMnOpQrStUvWxYz1234567890AbCdEfGhIjKl=
+Mar 11 10:25:11 server1 sshd[1932]: Failed password for root from 192.168.1.50 port 59032 ssh2
+Mar 11 10:27:39 server1 systemd[1]: Starting Apache2 Web Server...
+Mar 11 10:28:54 server1 sshd[1940]: Accepted password for user6 from 192.168.1.55 port 59804 ssh2
+Mar 11 10:30:12 server1 systemd[1]: Started Apache2 Web Server.
+Mar 11 10:31:00 server1 sshd[1945]: Accepted publickey for user7 from 192.168.1.60 port 60325 ssh2: ECDSA SHA256:WzXyZa1234567890AbCdEfGhIjKlMnOpQrStUv=
+Mar 11 10:32:50 server1 kernel: [112375.987654] audit: type=1400 audit(1678536011.233:89): apparmor="DENIED" operation="exec" profile="/usr/sbin/sshd" name="/bin/bash" pid=1959 comm="sshd" requested_mask="x" denied_mask="x" fsuid=0 ouid=0
+Mar 11 10:34:29 server1 sshd[1952]: Failed password for root from 192.168.1.35 port 60121 ssh2
+Mar 11 10:37:12 server1 sshd[1959]: Accepted password for user8 from 192.168.1.65 port 61234 ssh2
+Mar 11 10:39:03 server1 systemd[1]: Starting MySQL Database Server...
+Mar 11 10:40:01 server1 sshd[1965]: Accepted publickey for user9 from 192.168.1.70 port 61567 ssh2: RSA SHA256:ZaYxWvU1234567890AbCdEfGhIjKlMnOpQrStUv=
+Mar 11 10:42:10 server1 systemd[1]: Started MySQL Database Server.
+Mar 11 10:45:15 server1 systemd[1]: Started Daily apt upgrade and clean activities.
