@@ -6,6 +6,7 @@ For each of the one-liners, you can either replace each variable directly or def
 
 ## Shortcut (LNK) Target
 Recursively captures all LNK files from the base directory ($BaseDir) and displays each shortcut's target path. This will also display its directory and any arguments.
+
 _Note: You can substitute the `$BaseDir` with `(Get-Location)` to recursively capture LNK files in your pwd._
 ```
 $Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse $BaseDir -Include *.lnk | ForEach-Object {[PSCustomObject]@{ Name=$_.Name;Dir=$_.Directory;Target=$Sh.CreateShortcut($_).TargetPath;Arguments=$Sh.CreateShortcut($_).Arguments }} | Format-Table -AutoSize
