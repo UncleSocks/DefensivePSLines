@@ -4,6 +4,11 @@ A collection of PowerShell (PS) one-liners for cyber defenders to automate tasks
 
 For each of the one-liners, you can either replace each variable directly or define them before running the PS command.
 
+## Image File Execution Option (IFEO) Debugger
+```
+Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options" | ForEach-Object {[PSCustomObject]@{ Name=$_.PSChildName;Debugger=(Get-ItemProperty $_.PSPath).Debugger;Properties=$_.Property -join ';' }} | Format-Table -AutoSize
+```
+
 ## Shortcut (LNK) Target
 Recursively captures all LNK files from the base directory ($BaseDir) and displays each shortcut's target path. This will also display its directory and any arguments.
 
