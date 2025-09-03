@@ -7,20 +7,28 @@ You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you
 ## Image File Execution Option (IFEO) Debugger [T1546.012]
 **MITRE ATT&CK T1546.012 (Event Triggered Execution: Image File Execution Options Injection):** Adversaries may abuse the IEFO Debugger value to point to a malicious executable instead of a legitimate debugger software. This command recursively captures the subkeys within IFEO and displays their Debugger values, if any, along with other properties.
 ```
-Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options" | ForEach-Object {[PSCustomObject]@{ Name=$_.PSChildName;Debugger=(Get-ItemProperty $_.PSPath).Debugger;Properties=$_.Property -join ';' }} | Export-Csv "output.csv" -NoTypeInformation
+Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options" | ForEach-Object {[PSCustomObject]@{Name=$_.PSChildName;Debugger=(Get-ItemProperty $_.PSPath).Debugger;Properties=$_.Property -join ';'}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 ## Shortcut (LNK) Target Path [T1547.009] [T1204.002]
 **MITRE ATT&CK T1547.009 (Boot or Logon Autostart Execution: Shortcut Modification):** Adversaries may create or modify shortcuts in the startup folder ("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp") to execute their tools and maintain persistence. This command captures all shortcut files (LNK) in the startup folder and displays their target path and arguments.
 ```
-$Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp" -Include *.lnk | ForEach-Object {[PSCustomObject]@{ Name=$_.Name;Dir=$_.Directory;Target=$Sh.CreateShortcut($_).TargetPath;Arguments=$Sh.CreateShortcut($_).Arguments }} | Export-Csv "output.csv" -NoTypeInformation
+$Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp" -Include *.lnk | ForEach-Object {[PSCustomObject]@{Name=$_.Name;Dir=$_.Directory;Target=$Sh.CreateShortcut($_).TargetPath;Arguments=$Sh.CreateShortcut($_).Arguments}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 **MITRE ATT&CK T1204.002 (User Execution: Malicious File):** Adversaries may masquerade their malware using legitimate-looking LNK files. This command can be used to output all LNK files and their actual target path and arguments.
 
 _Note: You can substitute the `$BaseDir` with `(Get-Location)` to recursively capture LNK files in your pwd._
 ```
-$Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse $BaseDir -Include *.lnk | ForEach-Object {[PSCustomObject]@{ Name=$_.Name;Dir=$_.Directory;Target=$Sh.CreateShortcut($_).TargetPath;Arguments=$Sh.CreateShortcut($_).Arguments }} | Export-Csv -Path "output.csv" -NoTypeInformation
+$Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse $BaseDir -Include *.lnk | ForEach-Object {[PSCustomObject]@{Name=$_.Name;Dir=$_.Directory;Target=$Sh.CreateShortcut($_).TargetPath;Arguments=$Sh.CreateShortcut($_).Arguments}} | Export-Csv -Path "output.csv" -NoTypeInformation
+```
+
+## Microsoft Windows DNS Client Event ID 3008 External Queries [T1568.002]
+**MITRE ATT&CK T1568.002 (Dynamic Resolution: Domain Generation Algorithms):** Adversaries may use Domain Generation Algorithms (DGA) to generate random and/or "gibberish" domains for the command & control (C2) communication. This command captures Windows Event ID 3008 and identifies external DNS queries performed by the hosts, which can help identify unusual domain names. 
+
+_Note: Ensure that Microsoft Windows DNS Client Operational logging is enabled. Depending on the max log file configured, it may take sometime to complete._
+```
+Get-WinEvent -LogName "Microsoft-Windows-DNS-Client/Operational" | Where-Object {$_.Id -eq '3008' -and $_.Message -ne (Hostname) -and $_.Message -notmatch "..localmachine"} | ForEach-Object {if ($_.Message -match "DNS query is completed for the name ([^,\s]+)") {$matches[1]}} | Sort-Object | Select-Object -Unique @{Name="DnsQuery";Expression={$_}} | Export-Csv ".\Desktop\output.csv" -NoTypeInformation
 ```
 
 ## Reverse DNS Lookup
@@ -29,11 +37,6 @@ Automate bulk IP address reverse DNS lookup from a text file. Either directly re
 Get-Content -Path $TxtFilePath | ForEach-Object { $domain=Resolve-DnsName -Name $_ -Type PTR -DnsOnly -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NameHost; [PSCustomObject]@{IpAddress=$_;Domain=$domain} } | Format-Table -AutoSize
 ```
 
-## Windows Event External DNS Query
-Captures external DNS queries from Windows Event ID 3008. Ensure that Microsoft Windows DNS Client Operational logging is enabled. Please also note that, depending on the max log file configured, it may take a while.
-```
-Get-WinEvent -LogName "Microsoft-Windows-DNS-Client/Operational" | Where-Object {$_.Id -eq '3008' -and $_.Message -ne (Hostname) -and $_.Message -notmatch "..localmachine"} | ForEach-Object {if ($_.Message -match "DNS query is completed for the name ([^,\s]+)") {$matches[1]}} | Sort-Object | Select-Object -Unique @{Name="DnsQuery";Expression={$_}}
-```
 
 ## Hash IOC Search
 Automate the search for hash IOCs in a local Windows host. Either directly replace the following variables or define them before running the one-liner:
@@ -44,7 +47,7 @@ Automate the search for hash IOCs in a local Windows host. Either directly repla
 ```
 $Output=@(); $FileCounter=0; $HashList=Get-Content -Path $TxtFilePath; Get-ChildItem -Path $Directory -Recurse -File -Force -Include $Extensions -ErrorAction SilentlyContinue | ForEach-Object {$FileHash=Get-FileHash -Path $_.FullName -Algorithm $Algorithm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Hash; Write-Progress -Activity "Searching for file hashes..." -Status "Files Processed: $FileCounter | Current Directory:$($_.Directory)" -PercentComplete (($FileCounter %100) * 1); $FileCounter++; if ($FileHash -in $HashList) {$Output+=[PSCustomObject]@{Hash=$FileHash;FilePath=$_.FullName}}}; $Output | Format-Table -AutoSize  
 ```
-
+## Bulk Lookups
 ## Abuse IP DB Lookup
 Automate bulk IP address Abuse IP DB lookup from a text file. Either directly replace `$TxtFilePath` with the actual file path of the .txt file and `$ApiKey` with your Abuse IP DB V2 API key, or define them as variables before running the one-liner.
 ```
