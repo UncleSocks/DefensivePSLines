@@ -17,6 +17,7 @@ $Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse "C:\ProgramData\M
 ```
 
 **MITRE ATT&CK T1204.002 (User Execution: Malicious File):** Adversaries may masquerade their malware using legitimate-looking LNK files. This command can be used to output all LNK files and their actual target path and arguments.
+
 _Note: You can substitute the `$BaseDir` with `(Get-Location)` to recursively capture LNK files in your pwd._
 ```
 $Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse $BaseDir -Include *.lnk | ForEach-Object {[PSCustomObject]@{ Name=$_.Name;Dir=$_.Directory;Target=$Sh.CreateShortcut($_).TargetPath;Arguments=$Sh.CreateShortcut($_).Arguments }} | Export-Csv -Path "output.csv" -NoTypeInformation
