@@ -8,13 +8,13 @@ You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you
 ## List Scheduled Tasks [T1053.005]
 **MITRE ATT&CK T1053.005 (Scheduled Task/Job: Scheduled Task):** Adversaries may abuse the Windows Task Scheduler to perform task scheduling for initial or recurring execution of malicious code. They may also use Windows Task Scheduler to execute malware at startup or on a scheduled basis for persistence. This command captures all scheduled tasks using `Get-ScheduledTask` and displays the task name, status, task path, author, description, action with arguments, and triggers (start and end boundaries).
 ```
-Get-ScheduledTask | ForEach-Object {[PSCustomObject]@{Name=$_.TaskName;State=$_.State;TaskPath=$_.TaskPath;Author=$_.Author;Description=$_.Description;Actions=($_.Actions|ForEach-Object{"$($_.Execute) $($_.Arguments)"}) -join "|";Triggers=($_.Triggers|ForEach-Object{"Status:$($_.Enabled);StartBoundary:$($_.StartBoundary);EndBoundary:$($_.EndBoundary)"})-join "|"}} | Export-Csv "output.csv" -NoTypeInformation
+Get-ScheduledTask | ForEach-Object {[PSCustomObject]@{Name=$_.TaskName;State=$_.State;TaskPath=$_.TaskPath;Author=$_.Author;Description=$_.Description;Actions=($_.Actions|ForEach-Object{"$($_.Execute) $($_.Arguments)"}) -join "|";Triggers=($_.Triggers|ForEach-Object{"Status:$($_.Enabled);StartBoundary:$($_.StartBoundary);EndBoundary:$($_.EndBoundary)"}) -join "|"}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 ## Image File Execution Option (IFEO) Debugger [T1546.012]
 **MITRE ATT&CK T1546.012 (Event Triggered Execution: Image File Execution Options Injection):** Adversaries may abuse the IEFO Debugger value to point to a malicious executable instead of a legitimate debugger software. This command recursively captures the subkeys within IFEO and displays their Debugger values, if any, along with other properties.
 ```
-Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options" | ForEach-Object {[PSCustomObject]@{Name=$_.PSChildName;Debugger=(Get-ItemProperty $_.PSPath).Debugger;Properties=$_.Property -join ';'}} | Export-Csv "output.csv" -NoTypeInformation
+Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options" | ForEach-Object {[PSCustomObject]@{Name=$_.PSChildName;Debugger=(Get-ItemProperty $_.PSPath).Debugger;Properties=$_.Property -join "|"}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 ## Shortcut (LNK) Target Path [T1547.009] [T1204.002]
