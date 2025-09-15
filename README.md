@@ -4,6 +4,13 @@ A collection of PowerShell inline (one-liner) commands to help cyber defenders a
 
 You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you want to display the output in the console; the output path can always be changed according to your preference.
 
+
+## List Scheduled Tasks [T1053.005]
+**MITRE ATT&CK T1053.005 (Scheduled Task/Job: Scheduled Task):** Adversaries may abuse the Windows Task Scheduler to perform task scheduling for initial or recurring execution of malicious code. They may also use Windows Task Scheduler to execute malware at startup or on a scheduled basis for persistence. This command captures all scheduled tasks using `Get-ScheduledTask` and displays the task name, status, task path, author, description, action with arguments, and triggers (start and end boundaries).
+```
+Get-ScheduledTask | ForEach-Object {[PSCustomObject]@{Name=$_.TaskName;State=$_.State;TaskPath=$_.TaskPath;Author=$_.Author;Description=$_.Description;Actions=($_.Actions|ForEach-Object{"$($_.Execute) $($_.Arguments)"}) -join "|";Triggers=($_.Triggers|ForEach-Object{"Status:$($_.Enabled);StartBoundary:$($_.StartBoundary);EndBoundary:$($_.EndBoundary)"})-join "|"}} | Export-Csv "output.csv" -NoTypeInformation
+```
+
 ## Image File Execution Option (IFEO) Debugger [T1546.012]
 **MITRE ATT&CK T1546.012 (Event Triggered Execution: Image File Execution Options Injection):** Adversaries may abuse the IEFO Debugger value to point to a malicious executable instead of a legitimate debugger software. This command recursively captures the subkeys within IFEO and displays their Debugger values, if any, along with other properties.
 ```
@@ -28,7 +35,7 @@ $Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse $BaseDir -Include
 
 _Note: Ensure that Microsoft Windows DNS Client Operational logging is enabled. Depending on the max log file configured, it may take sometime to complete._
 ```
-Get-WinEvent -LogName "Microsoft-Windows-DNS-Client/Operational" | Where-Object {$_.Id -eq '3008' -and $_.Message -ne (Hostname) -and $_.Message -notmatch "..localmachine"} | ForEach-Object {if ($_.Message -match "DNS query is completed for the name ([^,\s]+)") {$matches[1]}} | Sort-Object | Select-Object -Unique @{Name="DnsQuery";Expression={$_}} | Export-Csv ".\Desktop\output.csv" -NoTypeInformation
+Get-WinEvent -LogName "Microsoft-Windows-DNS-Client/Operational" | Where-Object {$_.Id -eq '3008' -and $_.Message -ne (Hostname) -and $_.Message -notmatch "..localmachine"} | ForEach-Object {if ($_.Message -match "DNS query is completed for the name ([^,\s]+)") {$matches[1]}} | Sort-Object | Select-Object -Unique @{Name="DnsQuery";Expression={$_}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 ## Reverse DNS Lookup
