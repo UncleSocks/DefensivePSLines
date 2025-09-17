@@ -1,6 +1,6 @@
 # Inline PowerShell Commands for Cyber Defense
 
-A collection of PowerShell inline (one-liner) commands to help cyber defenders and security professionals in their investigations. Some commands may require you to define the variable(s) or directly substitute them before execution. Personally, I use these scripts when investigating endpoints via an EDR.
+A collection of PowerShell inline (one-liner) commands to help cyber defenders and security professionals in their investigations. Some commands may require you to define the variable(s) or directly substitute them before execution. Personally, I use these scripts when investigating endpoints via an EDR, and I need to capture specific information.
 
 You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you want to display the output in the console; the output path can always be changed according to your preference.
 
