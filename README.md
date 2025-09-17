@@ -6,9 +6,9 @@ You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you
 
 
 ## List Scheduled Tasks [T1053.005]
-**MITRE ATT&CK T1053.005 (Scheduled Task/Job: Scheduled Task):** Adversaries may abuse the Windows Task Scheduler to perform task scheduling for initial or recurring execution of malicious code. They may also use Windows Task Scheduler to execute malware at startup or on a scheduled basis for persistence. This command captures all scheduled tasks using `Get-ScheduledTask` and displays the task name, status, task path, author, description, action with arguments, and triggers (start and end boundaries).
+**MITRE ATT&CK T1053.005 (Scheduled Task/Job: Scheduled Task):** Adversaries may abuse the Windows Task Scheduler to perform task scheduling for initial or recurring execution of malicious code. They may also use Windows Task Scheduler to execute malware at startup or on a scheduled basis for persistence. This command captures all scheduled tasks using `Get-ScheduledTask` and displays the task name, status, task path, author, description, action with arguments, and last and next run times.
 ```
-Get-ScheduledTask | ForEach-Object {[PSCustomObject]@{Name=$_.TaskName;State=$_.State;TaskPath=$_.TaskPath;Author=$_.Author;Description=$_.Description;Actions=($_.Actions|ForEach-Object{"$($_.Execute) $($_.Arguments)"}) -join "|";Triggers=($_.Triggers|ForEach-Object{"Status:$($_.Enabled);StartBoundary:$($_.StartBoundary);EndBoundary:$($_.EndBoundary)"}) -join "|"}} | Export-Csv "output.csv" -NoTypeInformation
+Get-ScheduledTask | ForEach-Object {$STInfo=Get-ScheduledTaskInfo -TaskName ($_.TaskPath+$_.TaskName);[PSCustomObject]@{Name=$_.TaskName;State=$_.State;TaskPath=$_.TaskPath;Author=$_.Author;Description=$_.Description;Actions=($_.Actions | ForEach-Object {"$($_.Execute) $($_.Arguments)"}) -join "|";LastRunTime=$STInfo.LastRunTime;NextRunTime=$STInfo.NextRunTime}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 ## Image File Execution Option (IFEO) Debugger [T1546.012]
