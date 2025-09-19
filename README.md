@@ -5,6 +5,17 @@ A collection of PowerShell inline (one-liner) commands to help cyber defenders a
 You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you want to display the output in the console; the output path can always be changed according to your preference.
 
 
+## Enumerate Run Registry Key [T1547.001]
+**MITRE ATT&CK T1547.001 (Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder):** Adversaries can reference a program in the "Run" registry key to achieve persistence. Once added to this key, the malicious program will be executed automatically when a user logs in. The "Run" key is present at the machine (HKLM) or at the user (HKU) level:
+**HKLM:** This command will capture all "Run" properties and their values at the machine level.
+```
+(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run").PSObject.Properties | Where-Object Name -NotIn @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider') | Select-Object Name, Value | Export-Csv "output.csv" -NoTypeInformation
+```
+**HKU:** This command iterates over the HKEY_USERS key to retrieve the "Run" properties and their corresponding values for each user. This also captures the SID to which the property belongs.
+```
+Get-ChildItem -Path "Registry::HKEY_USERS" -ErrorAction SilentlyContinue | ForEach-Object{$sid=$_.PSChildName;(Get-ItemProperty -Path ($_.PSPath+"\SOFTWARE\Microsoft\Windows\CurrentVersion\Run") -ErrorAction SilentlyContinue).PSObject.Properties | Where-Object Name -NotIn @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider') | Select-Object @{n='SID';e={$sid}}, Name, Value} | Export-Csv "output.csv" -NoTypeInformation
+```
+
 ## List Scheduled Tasks [T1053.005]
 **MITRE ATT&CK T1053.005 (Scheduled Task/Job: Scheduled Task):** Adversaries may abuse the Windows Task Scheduler to perform task scheduling for initial or recurring execution of malicious code. They may also use Windows Task Scheduler to execute malware at startup or on a scheduled basis for persistence. This command captures all scheduled tasks using `Get-ScheduledTask` and displays the task name, status, task path, author, description, action with arguments, and last and next run times.
 ```
