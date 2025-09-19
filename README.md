@@ -50,6 +50,7 @@ _Note: Ensure that Microsoft Windows DNS Client Operational logging is enabled. 
 Get-WinEvent -LogName "Microsoft-Windows-DNS-Client/Operational" | Where-Object {$_.Id -eq '3008' -and $_.Message -ne (Hostname) -and $_.Message -notmatch "..localmachine"} | ForEach-Object {if ($_.Message -match "DNS query is completed for the name ([^,\s]+)") {$matches[1]}} | Sort-Object | Select-Object -Unique @{Name="DnsQuery";Expression={$_}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
+## Automating Bulk Inputs
 ## Reverse DNS Lookup
 Automate bulk IP address reverse DNS lookup from a text file. Either directly replace `$TxtFilePath` with the actual file path of the .txt file or define it as a variable before running the one-liner.
 ```
@@ -66,7 +67,7 @@ Automate the search for hash IOCs in a local Windows host. Either directly repla
 ```
 $Output=@(); $FileCounter=0; $HashList=Get-Content -Path $TxtFilePath; Get-ChildItem -Path $Directory -Recurse -File -Force -Include $Extensions -ErrorAction SilentlyContinue | ForEach-Object {$FileHash=Get-FileHash -Path $_.FullName -Algorithm $Algorithm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Hash; Write-Progress -Activity "Searching for file hashes..." -Status "Files Processed: $FileCounter | Current Directory:$($_.Directory)" -PercentComplete (($FileCounter %100) * 1); $FileCounter++; if ($FileHash -in $HashList) {$Output+=[PSCustomObject]@{Hash=$FileHash;FilePath=$_.FullName}}}; $Output | Format-Table -AutoSize  
 ```
-## Bulk Lookups
+
 ## Abuse IP DB Lookup
 Automate bulk IP address Abuse IP DB lookup from a text file. Either directly replace `$TxtFilePath` with the actual file path of the .txt file and `$ApiKey` with your Abuse IP DB V2 API key, or define them as variables before running the one-liner.
 ```
