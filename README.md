@@ -7,6 +7,7 @@ You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you
 
 ## Enumerate Run Registry Key [T1547.001]
 **MITRE ATT&CK T1547.001 (Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder):** Adversaries can reference a program in the "Run" registry key to achieve persistence. Once added to this key, the malicious program will be executed automatically when a user logs in. The "Run" key is present at the machine (HKLM) or at the user (HKU) level:
+
 **HKLM:** This command will capture all "Run" properties and their values at the machine level.
 ```
 (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run").PSObject.Properties | Where-Object Name -NotIn @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider') | Select-Object Name, Value | Export-Csv "output.csv" -NoTypeInformation
