@@ -5,6 +5,15 @@ A collection of PowerShell inline (one-liner) commands to help cyber defenders a
 You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you want to display the output in the console; the output path can always be changed according to your preference.
 
 
+## Recursively Search for NPM Packages
+```
+Get-ChildItem -Path $Dir -Recurse -ErrorAction SilentlyContinue -Force | Where-Object {$_.Parent.Name -like '*node_modules' -and $_.Name -notlike '*.bin'} | ForEach-Object {$npm=(Get-Content "$($_.FullName)\package.json" -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json);[PSCustomObject]@{FullPath=$_.FullName;Package="$($npm.name)@$($npm.version)"}} | Export-Csv "output.csv" -NoTypeInformation
+```
+```
+Get-ChildItem -Path $Dir -Recurse -ErrorAction SilentlyContinue -Force | Where-Object {$_.Name -eq $PackageName -and $_.Name -notlike '*.bin'} | ForEach-Object {$npm=(Get-Content "$($_.FullName)\package.json" -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json);[PSCustomObject]@{FullPath=$_.FullName;Package="$($npm.name)@$($npm.version)"}} | Export-Csv "output.csv" -NoTypeInformation
+```
+
+
 ## Enumerate Run Registry Key [T1547.001]
 **MITRE ATT&CK T1547.001 (Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder):** Adversaries can reference a program in the "Run" registry key to achieve persistence. Once added to this key, the malicious program will be executed automatically when a user logs in. The "Run" key is present at the machine (HKLM) or at the user (HKU) level:
 
