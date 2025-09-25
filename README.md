@@ -10,7 +10,7 @@ You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you
 Get-ChildItem -Path $Dir -Recurse -ErrorAction SilentlyContinue -Force | Where-Object {$_.Parent.Name -like '*node_modules' -and $_.Name -notlike '*.bin'} | ForEach-Object {$npm=(Get-Content "$($_.FullName)\package.json" -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json);[PSCustomObject]@{FullPath=$_.FullName;Package="$($npm.name)@$($npm.version)"}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 ```
-Get-ChildItem -Path $Dir -Recurse -ErrorAction SilentlyContinue -Force | Where-Object {$_.Name -eq $PackageName -and $_.Name -notlike '*.bin'} | ForEach-Object {$npm=(Get-Content "$($_.FullName)\package.json" -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json);[PSCustomObject]@{FullPath=$_.FullName;Package="$($npm.name)@$($npm.version)"}} | Export-Csv "output.csv" -NoTypeInformation
+Get-ChildItem -Path $Dir -Recurse -ErrorAction SilentlyContinue -Force | Where-Object {$_.Name -eq $PackageName} | ForEach-Object {$npm=(Get-Content "$($_.FullName)\package.json" -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json);[PSCustomObject]@{FullPath=$_.FullName;Package="$($npm.name)@$($npm.version)"}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 
