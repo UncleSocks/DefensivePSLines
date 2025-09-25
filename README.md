@@ -1,14 +1,17 @@
 # Inline PowerShell Commands for Cyber Defense
 
-A collection of PowerShell inline (one-liner) commands to help cyber defenders and security professionals in their investigations. Some commands may require you to define the variable(s) or directly substitute them before execution. Personally, I use these commands when investigating endpoints via an EDR and I need to quickly capture specific information.
+A collection of PowerShell inline (one-liner) commands to help cyber defenders and security professionals in their investigations. Some commands may require you to define the variable(s) or directly substitute them before execution. Personally, I use these commands when investigating endpoints via an EDR, and I need to capture specific information quickly.
 
 You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you want to display the output in the console; the output path can always be changed according to your preference.
 
 
-## Recursively Search for NPM Packages
+## Recursively Search for NPM Packages [T1195.001]
+**Current Use Case:** Enumerating installed NPM packages to check whether a Shai-Hulud-infected package is present in your system.
+**MITRE ATT&CK T1195.001 (Supply Chain Compromise: Compromise Software Dependencies and Development Tools):** Adversaries may manipulate software dependencies, such as NPM, to add malicious code to users of the dependency. The command below recursively enumerates installed NPM packages residing in the _node_modules_ folder across the given directory or root drive (C:\). 
 ```
 Get-ChildItem -Path $Dir -Recurse -ErrorAction SilentlyContinue -Force | Where-Object {$_.Parent.Name -like '*node_modules' -and $_.Name -notlike '*.bin'} | ForEach-Object {$npm=(Get-Content "$($_.FullName)\package.json" -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json);[PSCustomObject]@{FullPath=$_.FullName;Package="$($npm.name)@$($npm.version)"}} | Export-Csv "output.csv" -NoTypeInformation
 ```
+Alternatively, users may want to look for a specific NPM package. In that case, the command below can be used, where the `$PackageName` variable can be replaced by the NPM package name, such as `ngx-bootstrap`.
 ```
 Get-ChildItem -Path $Dir -Recurse -ErrorAction SilentlyContinue -Force | Where-Object {$_.Name -eq $PackageName} | ForEach-Object {$npm=(Get-Content "$($_.FullName)\package.json" -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json);[PSCustomObject]@{FullPath=$_.FullName;Package="$($npm.name)@$($npm.version)"}} | Export-Csv "output.csv" -NoTypeInformation
 ```
