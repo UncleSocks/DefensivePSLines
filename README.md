@@ -14,7 +14,7 @@ You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you
 ```
 **HKU:** This command iterates over the HKEY_USERS key to retrieve the "Run" properties and their corresponding values for each user. This also captures the SID to which the property belongs.
 ```
-Get-ChildItem -Path "Registry::HKEY_USERS" -ErrorAction SilentlyContinue | ForEach-Object{$sid=$_.PSChildName;(Get-ItemProperty -Path ($_.PSPath+"\SOFTWARE\Microsoft\Windows\CurrentVersion\Run") -ErrorAction SilentlyContinue).PSObject.Properties | Where-Object Name -NotIn @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider') | Select-Object @{n='SID';e={$sid}}, Name, Value} | Export-Csv "output.csv" -NoTypeInformation
+Get-ChildItem -Path "Registry::HKEY_USERS" -ErrorAction SilentlyContinue -Force | ForEach-Object{$sid=$_.PSChildName;(Get-ItemProperty -Path ($_.PSPath+"\SOFTWARE\Microsoft\Windows\CurrentVersion\Run") -ErrorAction SilentlyContinue).PSObject.Properties | Where-Object Name -NotIn @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider') | Select-Object @{n='SID';e={$sid}}, Name, Value} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 ## List Scheduled Tasks [T1053.005]
@@ -26,13 +26,13 @@ Get-ScheduledTask | ForEach-Object {$STInfo=Get-ScheduledTaskInfo -TaskName ($_.
 ## Image File Execution Option (IFEO) Debugger [T1546.012]
 **MITRE ATT&CK T1546.012 (Event Triggered Execution: Image File Execution Options Injection):** Adversaries may abuse the IEFO Debugger value to point to a malicious executable instead of a legitimate debugger software. This command recursively captures the subkeys within IFEO and displays their Debugger values, if any, along with other properties.
 ```
-Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options" | ForEach-Object {[PSCustomObject]@{Name=$_.PSChildName;Debugger=(Get-ItemProperty $_.PSPath).Debugger;Properties=$_.Property -join "|"}} | Export-Csv "output.csv" -NoTypeInformation
+Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options" -ErrorAction SilentlyContinue -Force | ForEach-Object {[PSCustomObject]@{Name=$_.PSChildName;Debugger=(Get-ItemProperty $_.PSPath).Debugger;Properties=$_.Property -join "|"}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 ## Shortcut (LNK) Target Path [T1547.009] [T1204.002]
 **MITRE ATT&CK T1547.009 (Boot or Logon Autostart Execution: Shortcut Modification):** Adversaries may create or modify shortcuts in the startup folder ("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp") to execute their tools and maintain persistence. This command captures all shortcut files (LNK) in the startup folder and displays their target path and arguments.
 ```
-$Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp" -Include *.lnk | ForEach-Object {[PSCustomObject]@{Name=$_.Name;Dir=$_.Directory;Target=$Sh.CreateShortcut($_).TargetPath;Arguments=$Sh.CreateShortcut($_).Arguments}} | Export-Csv "output.csv" -NoTypeInformation
+$Sh=New-Object -ComObject WScript.Shell;Get-ChildItem -Recurse "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp" -Include *.lnk -ErrorAction SilentlyContinue -Force | ForEach-Object {[PSCustomObject]@{Name=$_.Name;Dir=$_.Directory;Target=$Sh.CreateShortcut($_).TargetPath;Arguments=$Sh.CreateShortcut($_).Arguments}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 **MITRE ATT&CK T1204.002 (User Execution: Malicious File):** Adversaries may masquerade their malware using legitimate-looking LNK files. This command can be used to output all LNK files and their actual target path and arguments.
