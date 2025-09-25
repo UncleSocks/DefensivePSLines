@@ -6,7 +6,7 @@ You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you
 
 
 ## Recursively Search for NPM Packages [T1195.001]
-**Current Use Case:** Enumerating installed NPM packages to check whether a Shai-Hulud-infected package is present in your system.
+**Current Use Case:** Enumeration of installed NPM packages to check whether a Shai-Hulud-infected package is present in your system.
 
 **MITRE ATT&CK T1195.001 (Supply Chain Compromise: Compromise Software Dependencies and Development Tools):** Adversaries may manipulate software dependencies, such as NPM, to add malicious code to users of the dependency. The command below recursively enumerates installed NPM packages residing in the _node_modules_ folder across the given directory or root drive (C:\). 
 ```
