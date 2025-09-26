@@ -5,6 +5,11 @@ A collection of PowerShell inline (one-liner) commands to help cyber defenders a
 You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you want to display the output in the console; the output path can always be changed according to your preference.
 
 
+## Parse SSH Authentication Attempts from RHEL Messages Logs
+```
+Select-String -Path $Messages -Pattern "(?<timestamp>[a-zA-Z]{3}\s+([0-9]|[0-2][0-9]|[3][0-1])\s+[0-2][0-9]:[0-5][0-9]:[0-9]{2}).*?(?<status>accepted|failed)\s(?<method>none|publickey|password|gssapi-with-mic|hostbased|keyboard-interactive.*)\sfor\s(?<user>[a-zA-Z_\-0-9]+)" -AllMatches | ForEach-Object {$_.Matches | ForEach-Object {$timestamp=$_.Groups['timestamp'].Value;$status=$_.Groups['status'].Value;$method=$_.Groups['method'].Value;$user=$_.Groups['user'].Value}; [PSCustomObject]@{Timestamp=$timestamp;Status=$status;Method=$method;User=$user}} | Export-Csv "output.csv" -NoTypeInformation
+```
+
 ## Recursively Search for NPM Packages [T1195.001]
 **Current Use Case:** Enumeration of installed NPM packages to check whether a Shai-Hulud-infected package is present in your system.
 
