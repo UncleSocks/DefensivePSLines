@@ -7,7 +7,7 @@ You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you
 
 ## Parse SSH Authentication Attempts from RHEL Messages Logs
 ```
-Select-String -Path $Messages -Pattern "(?<timestamp>[a-zA-Z]{3}\s+([0-9]|[0-2][0-9]|[3][0-1])\s+[0-2][0-9]:[0-5][0-9]:[0-9]{2}).*?(?<status>accepted|failed)\s(?<method>none|publickey|password|gssapi-with-mic|hostbased|keyboard-interactive.*)\sfor\s(?<user>[a-zA-Z_\-0-9]+)" -AllMatches | ForEach-Object {$_.Matches | ForEach-Object {$timestamp=$_.Groups['timestamp'].Value;$status=$_.Groups['status'].Value;$method=$_.Groups['method'].Value;$user=$_.Groups['user'].Value}; [PSCustomObject]@{Timestamp=$timestamp;Status=$status;Method=$method;User=$user}} | Export-Csv "output.csv" -NoTypeInformation
+Select-String -Path $Messages -Pattern "(?<timestamp>[a-zA-Z]{3}\s+([0-9]|[0-2][0-9]|[3][0-1])\s+[0-2][0-9]:[0-5][0-9]:[0-9]{2}).*?(?<status>accepted|failed)\s(?<method>none|publickey|password|gssapi-with-mic|hostbased|keyboard-interactive.*)\sfor\s(?<user>[a-zA-Z_\-0-9]+)\s.*from\s(?<source>\S+)?\sport\s(?<port>\d+)?" -AllMatches | ForEach-Object {$_.Matches | ForEach-Object {$timestamp=$_.Groups['timestamp'].Value;$status=$_.Groups['status'].Value;$method=$_.Groups['method'].Value;$user=$_.Groups['user'].Value;$source=$_.Groups['source'].Value;$port=$_.Groups['port'].Value}; [PSCustomObject]@{Timestamp=$timestamp;Status=$status;Method=$method;User=$user;Source=$source;Port=$port}} | Export-Csv "output.csv" -NoTypeInformation
 ```
 
 ## Recursively Search for NPM Packages [T1195.001]
