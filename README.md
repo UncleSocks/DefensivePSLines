@@ -92,6 +92,12 @@ Automate bulk IP address Abuse IP DB lookup from a text file. Either directly re
 Get-Content -Path $TxtFilePath | ForEach-Object { $lookup=Invoke-RestMethod -Uri "https://api.abuseipdb.com/api/v2/check" -Method "GET" -Headers @{"Key"="$ApiKey";"Application"="application/json"} -Body @{"ipAddress"=$_; "maxAgeInDays"="90"} -ErrorAction SilentlyContinue; $lookup.data } | Select-Object ipAddress,countryCode,usageType,isp,domain,abuseConfidenceScore,totalReports,isWhitelisted,isTor | Export-Csv -Path "output.csv" -NoTypeInformation
 ```
 
+## IPInfo
+Automate bulk IP address IPInfo lookup from a text file. Either directly replace `$TxtFilePath` with the actual file path of the .txt file and `$ApiKey` with your IPInfo API key, or define them as variables before running the one-liner.
+```
+Get-Content -Path $TxtFilePath | ForEach-Object {$lookup=Invoke-RestMethod -Uri "https://api.ipinfo.io/lite/$($_)" -Method "GET" -Headers @{"Authorization"="Bearer $ApiKey"} -ErrorAction SilentlyContinue; [PSCustomObject]@{IpAddress=$_;ASN=$lookup.asn;ASName=$lookup.as_name;ASNDomain=$lookup.as_domain;CountryCode=$lookup.country_code;Country=$lookup.country;ContinentCode=$lookup.continent_code;Continent=$lookup.continent}} | Export-Csv -Path "./Desktop/output.csv" -NoTypeInformation
+```
+
 ## VirusTotal Lookup
 ### IP Address
 Automate bulk IP address lookups on VirusTotal from a text file. Either directly replace `$TxtFilePath` with the actual file path of the .txt file and `$ApiKey` with your VirusTotal V3 API key, or define them as variables before running the one-liner.
