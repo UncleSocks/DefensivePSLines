@@ -4,6 +4,11 @@ A collection of PowerShell inline (one-liner) commands to help cyber defenders a
 
 You can also change the `Export-Csv` pipeline to `Format-Table -AutoSize` if you want to display the output in the console; the output path can always be changed according to your preference.
 
+## Enumerate Accessibility Technologies (AT) Registries [1546.008]
+```
+$Config=(Get-ItemProperty -Path "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Accessibility" -Name "Configuration" -ErrorAction SilentlyContinue).Configuration; $ConfigList=$Config -split ','; Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Accessibility\ATs" | ForEach-Object {$Path=Get-ItemProperty -Path $_.PSPath; $Name=$Path.PSChildName;[PSCustomObject]@{Name=$Name;ATExe=$Path.ATExe;StartExe=$Path.StartExe;Description=$Path.Description;Configuration=if ($ConfigList -contains $Name){"Present"}}} | Format-Table -AutoSize
+```
+
 
 ## Parse SSH Authentication Attempts from RHEL Messages Logs
 ```
